@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Schluss mit dem Termin-Ping-Pong – Anleitung für dein Buchungstool (19 €)</title>
+  <meta name="description" content="Richte dir in einem Nachmittag ein Buchungstool ein, das Termine selbst in deinen Kalender schreibt – Schritt-für-Schritt-Anleitung für 19 €." />
+  <style>
+    :root {
+      --accent: #1e7f4f;
+      --accent-soft: #e7f4ec;
+      --ink: #1c2424;
+      --muted: #5c6b66;
+      --warn: #b42318;
+      --line: #e3e8e5;
+      --bg: #faf9f6;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    main { max-width: 720px; margin: 0 auto; padding: 40px 20px 64px; }
+    section { margin: 0 0 60px; }
+    /* Block 1 (Hero) bekommt extra Luft: die Chat-Szene soll wirken,
+       bevor die Auflösung (Lead-Absatz) kommt. */
+    main > section:first-of-type { padding-top: 28px; margin-bottom: 108px; }
+    .eyebrow {
+      display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: 0.04em;
+      color: var(--accent); background: var(--accent-soft); border-radius: 999px;
+      padding: 5px 13px; margin-bottom: 16px;
+    }
+    h1 { font-size: 34px; line-height: 1.15; margin: 0 0 18px; letter-spacing: -0.01em; }
+    h2 { font-size: 25px; line-height: 1.25; margin: 0 0 14px; letter-spacing: -0.01em; }
+    h3 { font-size: 18px; margin: 0 0 8px; }
+    p { margin: 0 0 14px; }
+    .lead { color: var(--muted); font-size: 18px; }
+    .ph { border-bottom: 1.5px dashed var(--accent); opacity: 0.85; }
+
+    /* Chat-Szene (wie im Demo-Rechner) */
+    .chat { display: flex; flex-direction: column; gap: 12px; margin: 0 0 14px; }
+    .bubble {
+      max-width: 78%; padding: 10px 14px; border-radius: 16px; font-size: 15px;
+      background: var(--card); border: 1px solid var(--line);
+    }
+    .bubble.right { align-self: flex-end; background: var(--accent-soft); border-color: transparent; }
+    .chat-meta { font-size: 13px; color: var(--muted); margin: 0 0 48px; }
+
+    /* Buttons + Trust */
+    .btn {
+      display: block; text-align: center; text-decoration: none;
+      border-radius: 14px; padding: 17px 22px; font-size: 17px; font-weight: 700; margin: 0 0 10px;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .trust { font-size: 13.5px; color: var(--muted); text-align: center; margin: 0 0 16px; }
+
+    /* Zweit-Verweis auf das Core-Angebot (bewusst dezent, nie größer als der Haupt-CTA) */
+    .btn-soft {
+      display: inline-block; text-decoration: none; margin: 4px 0 12px;
+      border: 2px solid var(--accent); color: var(--accent);
+      border-radius: 14px; padding: 12px 18px; font-weight: 700; font-size: 15.5px;
+    }
+    .btn-soft:hover { background: var(--accent-soft); }
+
+    /* Listen & Karten */
+    .card {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 16px; padding: 24px 22px; margin-bottom: 16px;
+    }
+    ul.check { list-style: none; padding: 0; margin: 0; }
+    ul.check li { padding-left: 30px; position: relative; margin-bottom: 10px; }
+    ul.check li::before {
+      content: "✓"; position: absolute; left: 4px; top: 0;
+      color: var(--accent); font-weight: 800;
+    }
+    ul.dream li::before { content: "→"; font-weight: 700; }
+    .arrows p { margin: 0 0 10px; font-weight: 600; }
+    .arrows p span { color: var(--accent); font-weight: 800; }
+
+    /* Tabelle */
+    table { width: 100%; border-collapse: collapse; font-size: 15px; }
+    th, td { padding: 11px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+    th { font-size: 13.5px; color: var(--muted); font-weight: 600; }
+    td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    td strong { color: var(--warn); }
+    .highlight {
+      background: var(--accent-soft); border: 1px solid #cbe5d5; border-radius: 14px;
+      padding: 16px 18px; font-size: 16px; margin-top: 16px;
+    }
+    .highlight strong { color: var(--accent); }
+
+    /* Deliverables */
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .dcard {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      padding: 16px 16px; font-size: 14.5px;
+    }
+    .dcard .tick { color: var(--accent); font-weight: 800; margin-right: 6px; }
+    .dcard strong { display: block; font-size: 15.5px; margin-bottom: 4px; }
+
+    /* Branchen-Chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+    .chip {
+      background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+      padding: 6px 13px; font-size: 13.5px; color: var(--ink);
+    }
+
+    /* Angebot */
+    .offer {
+      background: var(--ink); color: #fff; border-radius: 18px; padding: 28px 24px; text-align: center;
+    }
+    .offer h2 { color: #fff; }
+    .offer .price { font-size: 46px; font-weight: 800; letter-spacing: -0.02em; margin: 6px 0 2px; }
+    .offer .price span { font-size: 17px; font-weight: 500; color: #cfd8d3; }
+    .offer ul { list-style: none; text-align: left; max-width: 420px; margin: 18px auto 6px; padding: 0; font-size: 14.5px; color: #e8eeea; }
+    .offer ul li { margin-bottom: 8px; padding-left: 26px; position: relative; }
+    .offer ul li::before { content: "✓"; position: absolute; left: 2px; color: #6fd0a0; font-weight: 800; }
+    .offer .legal { font-size: 12.5px; color: #9fb2a9; margin: 14px 0 0; }
+
+    /* Über mich */
+    .about { display: grid; grid-template-columns: 64px 1fr; gap: 16px; align-items: start; }
+    .about .avatar {
+      width: 64px; height: 64px; border-radius: 50%; background: var(--accent-soft);
+      color: var(--accent); font-weight: 800; font-size: 24px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* FAQ */
+    details {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+      padding: 14px 18px; margin-bottom: 10px;
+    }
+    summary { font-weight: 600; cursor: pointer; font-size: 15.5px; }
+    details p { margin: 10px 0 0; font-size: 15px; }
+    details a { color: var(--accent); font-weight: 600; }
+
+    .center { text-align: center; }
+    .quiet { text-align: center; font-size: 14.5px; color: var(--muted); }
+
+    footer {
+      margin-top: 40px; padding-top: 22px; border-top: 1px solid var(--line);
+      font-size: 13.5px; color: var(--muted); text-align: center;
+    }
+    footer a { color: var(--muted); margin: 0 8px; }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 27px; }
+      .grid2 { grid-template-columns: 1fr; }
+      .offer .price { font-size: 38px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+
+    <!-- BLOCK 1: HERO mit Chat-Szene -->
+    <section>
+      <span class="eyebrow">Schritt-für-Schritt-Anleitung · PDF · ein Nachmittag</span>
+      <h1>Schluss mit dem Termin-Ping-Pong.</h1>
+      <div class="chat" aria-hidden="true">
+        <div class="bubble">„Passt Dienstag, 14 Uhr?“</div>
+        <div class="bubble right">„Dienstag geht bei mir nicht – Mittwoch?“</div>
+        <div class="bubble">„Mittwoch erst ab 16 🙈 Und Donnerstag?“</div>
+      </div>
+      <p class="chat-meta">Tag 3 · Nachricht 5 · Termin: noch nicht sicher</p>
+      <p class="lead"><strong>Richte dir in einem Nachmittag ein Buchungstool ein, das Termine selbst in deinen Kalender schreibt, ohne dass du eine einzige „Wann passt es dir?“-E-Mail schreibst – auch wenn du dich mit Technik bisher nicht auskennst.</strong></p>
+      <!-- EINZIGER Klick auf dieser Seite: Checkout. href ersetzen – z. B. Stripe Payment Link / Lemon Squeezy. -->
+      <a class="btn btn-primary" href="https://DEIN-CHECKOUT-LINK-MINI">Hol dir die Anleitung – 19 €</a>
+      <p class="trust">19 € einmalig · kein USt-Ausweis gem. § 19 UStG (Kleinunternehmerregelung) · sofortiger PDF-Zugang · Bezahlung per <span class="ph">[PayPal/Karte]</span> · Widerrufsrecht erlischt bei Sofort-Zugang – Details in der FAQ</p>
+      <p>Und bevor du den Einwand zu Ende denkst: <strong>Das hier ist kein Kontaktformular.</strong> Kontaktformulare sammeln Anfragen – und starten damit das Ping-Pong. Diese Seite sammelt fertige Termine.</p>
+    </section>
+
+    <!-- BLOCK 2: DREAM -->
+    <section>
+      <h2>Lass mal träumen …</h2>
+      <p>Und jetzt stell dir das Gegenteil vor:</p>
+      <ul class="check dream">
+        <li>Du öffnest morgens deinen Kalender – und da stehen schon zwei Termine für nächste Woche. Die jemand anderes reingeschrieben hat.</li>
+        <li>Um 23:47 bucht jemand einen Termin. Du hast geschlafen.</li>
+        <li>Niemand fragt dich mehr „Wann passt es dir?“ – deine Buchungsseite antwortet für dich, 24/7.</li>
+        <li>Erinnerungs-Mails sorgen für weniger abgesagte Termine – ohne dass du daran denken musst.</li>
+      </ul>
+    </section>
+
+    <!-- BLOCK 3: KONTAKTFORMULAR-EINWAND -->
+    <section>
+      <h2>„Ich habe doch ein Kontaktformular auf meiner Website.“</h2>
+      <div class="arrows">
+        <p><span>→</span> Klar. Dein Kontaktformular ist höflich. Es ist auch der Anfang jedes Ping-Pongs.</p>
+        <p><span>→</span> Aus einer Anfrage wird eine E-Mail-Schlacht aus fünf Mails: „Wann passt es dir?“ – „Dienstag?“ – „Dienstag geht schlecht…“ – bis einer aufgibt.</p>
+        <p><span>→</span> Mit einer Buchungsseite wird aus der Anfrage direkt ein <strong>Termin</strong>. Mit Erinnerung. Und Vorbereitungs-Fragen, die dein Kunde <em>vor</em> dem Termin beantwortet.</p>
+        <p><span>→</span> Ein Termin im Kalender ist kein bloßer Interessent. Er ist ein gebuchtes Gespräch. Und gebuchte Gespräche sind Kunden in zwei Wochen.</p>
+      </div>
+    </section>
+
+    <!-- BLOCK 4: RECHENBEISPIEL -->
+    <section>
+      <h2>Rechnen wir das einmal nach – an einem Beispiel</h2>
+      <p>Konservativ angenommen: 12 Minuten Hin und Her pro Termin, 60 €/h Stundensatz. Plus Wartezeit zwischen den Mails (oft 1–2 Tage!), in denen Interessenten kalt werden.</p>
+      <div class="card">
+        <table>
+          <thead>
+            <tr><th>Termine/Woche</th><th>Zeit im Nachrichten-Modus/Monat</th><th>Dein Ping-Pong/Monat</th><th>im Jahr</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="num">5</td><td>4,3 Std.</td><td class="num"><strong>260 €</strong></td><td class="num">3.120 €</td></tr>
+            <tr><td class="num">10</td><td>8,7 Std.</td><td class="num"><strong>520 €</strong></td><td class="num">6.240 €</td></tr>
+            <tr><td class="num">20</td><td>17,3 Std.</td><td class="num"><strong>1.040 €</strong></td><td class="num">12.480 €</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="highlight">Zum Vergleich: Ein Tool, das dir das komplett abnimmt, kostet <strong>0–10 € im Monat</strong>. Du zahlst also gerade ein Vielfaches – fürs Nachrichten-Schreiben.</div>
+    </section>
+
+    <!-- BLOCK 5: AGITATION -->
+    <section>
+      <h2>Warum funktioniert die eine Buchungsseite – und die andere nicht?</h2>
+      <p>Spoiler:</p>
+      <ul class="check">
+        <li><strong>NICHT</strong>, weil das eine Tool teurer ist.</li>
+        <li><strong>NICHT</strong>, weil die eine schöner aussieht.</li>
+        <li><strong>NICHT</strong>, weil die mehr Buchungsoptionen hat (im Gegenteil!).</li>
+      </ul>
+      <p>Ob Menschen tatsächlich buchen, entscheidet sich bei den Details: den <strong>Pufferzeiten</strong>, den <strong>Erinnerungs-Mails</strong>, den <strong>richtig gesetzten Buchungs-Links</strong> – und ob die Seite auf dem Handy funktioniert, wenn jemand um 23:47 endlich draufklickt.</p>
+    </section>
+
+    <!-- BLOCK 6: EMPATHIE -->
+    <section>
+      <h2>Bitte richte nicht einfach irgendein Tool ein</h2>
+      <p>Denn das Letzte, was du willst, ist:</p>
+      <ul class="check dream">
+        <li>einen halben Samstag in Einstellungsmenüs klicken,</li>
+        <li>ein Tool konfiguriert haben, das keiner findet,</li>
+        <li>Erinnerungen, die keiner bekommt,</li>
+        <li>… und DANN feststellen, dass sich an deinem Ping-Pong nichts ändert.</li>
+      </ul>
+      <p><strong>Richte es lieber gleich richtig ein. Das ist ein Nachmittag. Mit Fahrplan.</strong></p>
+    </section>
+
+    <!-- BLOCK 7: DELIVERABLES -->
+    <section>
+      <h2>Genau dafür gibt es die Anleitung „Schluss mit dem Termin-Ping-Pong"</h2>
+      <div class="grid2">
+        <div class="dcard"><span class="tick">🚀</span><strong>Tool-Auswahl in 10 Minuten</strong>Meine Empfehlung für kostenlose und bezahlte Buchungstools – und für wen welches passt.</div>
+        <div class="dcard"><span class="tick">🚀</span><strong>Schritt-für-Schritt-Setup</strong>Von Registrierung bis zur ersten Buchung, jede Einstellung mit Screenshots erklärt.</div>
+        <div class="dcard"><span class="tick">🚀</span><strong>Die 5 Einstellungen, die den Unterschied machen</strong>Pufferzeiten, Erinnerungs-Mails, Stornofenster, Vorbereitungs-Fragen, weitere Fragen.</div>
+        <div class="dcard"><span class="tick">🚀</span><strong>Copy-Vorlagen</strong>Wie du in E-Mail-Signatur, Website und Instagram-Nachrichten auf deine Buchungsseite aufmerksam machst – vorgefertigte Texte zum Kopieren.</div>
+        <div class="dcard"><span class="tick">🚀</span><strong>Vor-Launch-Checkliste</strong>10 Punkte, die du testest, bevor du den Link rausschickst (inklusive „buche einmal selbst vom Handy").</div>
+      </div>
+      <p style="margin-top:18px;">Am Ende hast du kein Tool, das „irgendwie eingerichtet" ist.</p>
+      <p><strong>Du hast eine Buchungsseite, die Termine sammelt. Und einen Nachmittag, den du nie wieder in E-Mail-Ping-Pong verbringst.</strong></p>
+    </section>
+
+    <!-- BLOCK 8: FÜR WEN -->
+    <section>
+      <h2>Für wen ist die Anleitung?</h2>
+      <div class="card">
+        <h3>Das ist für dich, wenn …</h3>
+        <ul class="check">
+          <li>du Termine mit Kundinnen und Kunden ausmachst – Beratung, Coaching, Therapie, Heilpraxis, Fotografie, Nachhilfe – und die Vereinbarung gerade manuell über E-Mails, Nachrichten oder Telefon läuft.</li>
+          <li>du schätzt, wie viel Zeit du mit Terminvereinbarungen verbringst – und es ärgert dich.</li>
+          <li>du willst, dass Termine einfach passieren, ohne dass du daran arbeitest.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Du brauchst …</h3>
+        <ul class="check">
+          <li>kein teures Tool (meine Empfehlung fängt kostenlos an).</li>
+          <li>keine Programmierung. Keinen Website-Umbau.</li>
+          <li>kein Technik-Studium. Wirklich nicht.</li>
+          <li>keinen neuen Webauftritt.</li>
+        </ul>
+        <p style="margin:0;">Du brauchst einen Nachmittag, einen Computer – und die Anleitung.</p>
+      </div>
+    </section>
+
+    <!-- BLOCK 8b: FÜR WEN NICHT – ehrlicher Verweis auf das Core-Angebot -->
+    <section>
+      <h2>Für wen ist die Anleitung nicht das Richtige?</h2>
+      <p>Ehrlich gesagt: Manchmal ist der schnellste Weg, es machen zu lassen. Die Anleitung ist nichts für dich, wenn …</p>
+      <ul class="check dream">
+        <li>du dich gar nicht darum kümmern möchtest – es soll einfach erledigt sein,</li>
+        <li>du den einen freien Nachmittag schlicht nicht hast,</li>
+        <li>du dir schon zweimal vorgenommen hast, es einzurichten – und es bis heute nicht passiert ist.</li>
+      </ul>
+      <p>Dann schau dir dieses Angebot an:</p>
+      <a class="btn-soft" href="https://DEIN-CORE-LINK">Ich richte es für dich ein – Angebot ansehen (270 €)</a>
+      <p class="quiet" style="margin-top:4px;">Dort setze ich das ganze Buchungstool für dich um – du buchst am Ende nur noch deinen ersten Termin.</p>
+    </section>
+
+    <!-- BLOCK 9: MARKTBREITE -->
+    <section>
+      <h2>Das funktioniert in jeder Branche mit Terminen</h2>
+      <div class="chips">
+        <span class="chip">Beratung &amp; Coaching</span><span class="chip">Therapie &amp; Heilpraxis</span><span class="chip">Nachhilfe &amp; Musikunterricht</span><span class="chip">Fotografie &amp; Design</span><span class="chip">Friseur, Kosmetik &amp; Nagelstudio</span><span class="chip">Steuerberatung &amp; Rechtsberatung</span><span class="chip">Immobilien &amp; Finanzierung</span><span class="chip">Handwerk mit Vor-Ort-Terminen</span><span class="chip">Personal Training &amp; Physio</span>
+      </div>
+    </section>
+
+    <!-- BLOCK 10: ÜBER MICH -->
+    <section>
+      <div class="card about">
+        <div class="avatar">K</div>
+        <div>
+          <h3>Hi, ich bin Kristina von wievonselbstAI</h3>
+          <p style="margin:0 0 10px;">Ich unterstütze Selbstständige wie dich dabei, digitale Tools mit und ohne KI in deinen Businessalltag einzusetzen – damit Energie- und Zeitfresser „wie von selbst“ verschwinden und du wieder mehr Zeit für dein Business, deine Freizeit oder für dich hast.</p>
+          <p style="margin:0;">Ich weiß, wie sich eine E-Mail-Schlacht um „Dienstag oder Donnerstag?" anfühlt. Und ich weiß, dass die Lösung nicht komplizierter sein darf als das Problem. Deshalb ist diese Anleitung kurz, knackig und super schnell umzusetzen – damit das Problem für immer gelöst ist.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- BLOCK 11: ANGEBOT -->
+    <section>
+      <div class="offer">
+        <h2>Hol dir jetzt die Anleitung</h2>
+        <p class="price">19 € <span>einmalig</span></p>
+        <ul>
+          <li>Tool-Auswahl-Ratgeber (kostenlos &amp; bezahlt)</li>
+          <li>Schritt-für-Schritt-Setup vom Login bis zur ersten Buchung</li>
+          <li>Die 5 wichtigsten Einstellungen für weniger Absagen und mehr Buchungen</li>
+          <li>Copy-Vorlagen für Signatur, Website &amp; Instagram</li>
+          <li>Vor-Launch-Checkliste zum Abhaken</li>
+        </ul>
+        <a class="btn btn-primary" href="https://DEIN-CHECKOUT-LINK-MINI">Hol dir die Anleitung – 19 €</a>
+        <p class="trust" style="color:#9fb2a9;">19 € einmalig · kein USt-Ausweis gem. § 19 UStG · sofortiger PDF-Zugang · Bezahlung per <span class="ph">[PayPal/Karte]</span> · Widerrufsrecht erlischt bei Sofort-Zugang</p>
+        <p class="legal">Zum Vergleich: Weniger als eine Stunde deiner Arbeitszeit. Genau die Stunde, die dir das Tool jeden Monat zurückgibt.</p>
+      </div>
+    </section>
+
+    <!-- BLOCK 12: FAQ + FINAL CTA -->
+    <section>
+      <h2 class="center">Kleine Anleitung – große Pläne.</h2>
+      <p class="center">Du musst heute noch keinen ganzen Verkaufsprozess aufbauen. Keine Werbeanzeigen schalten. Nicht den ganzen Weg deiner Kundinnen und Kunden durchplanen. Du brauchst erst einmal eine Buchungsseite, die Termine sammelt. Der Rest kommt später.</p>
+      <h3>Häufig gestellte Fragen</h3>
+      <details><summary>Brauche ich eine Website?</summary><p>Nein. Die meisten Buchungstools bringen eine eigene Buchungsseite mit, die du überall verlinken kannst – auch aus deiner E-Mail-Signatur.</p></details>
+      <details><summary>Muss ich ein teures Tool kaufen?</summary><p>Nein. Meine Standard-Empfehlung hat einen kostenlosen Tarif, der für den Anfang reicht.</p></details>
+      <details><summary>Wie lange dauert die Umsetzung wirklich?</summary><p>Rechne mit 1 Stunde bis zum ersten Testlauf. Wenn du Schritt für Schritt folgst, passt alles Weitere locker in einen Nachmittag.</p></details>
+      <details><summary>Kannst du das für mich machen?</summary><p>Ja, gerne – dann setze ich es für dich um. Schau dir dieses Angebot an: <a href="https://DEIN-CORE-LINK">Ich richte es für dich ein (270 €)</a>.</p></details>
+      <details><summary>Bekomme ich Updates?</summary><p>Ja. Sobald sich ein Tool, ein Schritt oder ein Screenshot in der Anleitung ändert, bekommst du die neue Version automatisch.</p></details>
+      <details><summary>Gilt ein Widerrufsrecht?</summary><p>Nein. Es ist ein digitales Produkt mit sofortigem Zugang: Dein Widerrufsrecht erlischt mit der Bereitstellung der Datei (§ 312g Abs. 2 Nr. 2 BGB). Du bestätigst genau das beim Kauf.</p></details>
+      <div style="margin-top:28px;">
+        <p class="center"><strong>Du brauchst nicht noch einen Newsletter-Artikel über Produktivität. Du brauchst einen Kalender, der sich von selbst füllt.</strong></p>
+        <a class="btn btn-primary" href="https://DEIN-CHECKOUT-LINK-MINI">Los, hol dir die Anleitung</a>
+        <p class="trust">19 € einmalig · kein USt-Ausweis gem. § 19 UStG · sofortiger PDF-Zugang · <span class="ph">[Zahlungsart]</span> · Widerrufsrecht erlischt bei Sofort-Zugang</p>
+      </div>
+    </section>
+
+    <footer>
+      <!-- Pflicht auf jeder geschäftlichen Seite: Impressum (§ 5 DDG) und Datenschutzerklärung – Links auf echte Seiten setzen. -->
+      <p>
+        <a href="/impressum">Impressum</a> · <a href="/datenschutz">Datenschutz</a>
+      </p>
+    </footer>
+
+  </main>
+</body>
+</html>
