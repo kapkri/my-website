@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Wie viel Umsatz musst du pro Woche machen, um dein Ziel zu erreichen? Mit ehrlicher Einschätzung und passendem GIF.">
+<title>Umsatzziel-Rechner</title>
+<style>
+/* VOICE: freundlich-retro vorne, frech und laut beim Ergebnis
+   IDEA: eine Webseite, die 2003 steckengeblieben ist (XP-Formular, glänzender Button)
+   PICTURE: eigenes GIF je Spruch, gezeichnete Figur als Ersatz
+   COLOUR and TYPE: Hellgrau #e4e4e4, XP-Blau; Ergebnis Gelb/Pink, Grün, Rot; Verdana/Tahoma, Impact
+   LAYOUT: eine schmale Spalte, Formular-Kasten, darunter Ergebnis-Kasten und Spruch-Block */
+:root{color-scheme:light}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:#e4e4e4;color:#222;font:13px/1.5 Verdana,Tahoma,Geneva,sans-serif;overflow-x:clip}
+.inhalt{max-width:580px;margin:0 auto;padding:32px 14px 24px}
+h1{font:bold 24px/1.1 Tahoma,Verdana,sans-serif;color:#1c3f7a;margin:0 0 6px}
+.unter{margin:0 0 18px;color:#555;font-size:13px}
+.kasten{background:#fff;border:1px solid #9a9a9a;margin-bottom:16px}
+.kopf{background:linear-gradient(#f7f7f7,#dadada);border-bottom:1px solid #9a9a9a;padding:5px 10px;font-weight:bold;font-size:12px;color:#333}
+.body{padding:14px 12px 6px}
+.zeile{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.zeile>label{width:165px;flex:none}
+.zeile small{color:#888;font-size:11px}
+.zeile input{flex:1;font:16px Verdana,Tahoma,sans-serif;padding:4px 5px;border:1px solid #7f9db9;background:#fff;color:#222;height:30px}
+.zeile input:focus{outline:2px dotted #1c3f7a;outline-offset:1px}
+.knopfzeile{text-align:right;padding:4px 0 10px}
+button{font:bold 14px Tahoma,Verdana,sans-serif;color:#fff;padding:0 20px;height:36px;border:1px solid #1d4a8c;border-radius:4px;cursor:pointer;
+  background:linear-gradient(#93bbee 0%,#4a86d4 49%,#2f6fc4 50%,#3f80d6 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 1px 2px rgba(0,0,0,.3);text-shadow:0 -1px 0 rgba(0,0,0,.35)}
+button:hover{background:linear-gradient(#a6c8f3 0%,#5b94dd 49%,#3c7cd0 50%,#4c8be0 100%)}
+button:active{background:linear-gradient(#2f6fc4,#4a86d4);box-shadow:inset 0 1px 3px rgba(0,0,0,.4)}
+button:focus-visible{outline:2px dotted #1c3f7a;outline-offset:2px}
+.hinweis{background:#fffbe0;border:1px solid #e0c870;padding:10px 12px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse}
+td{padding:9px 12px;border-bottom:1px solid #e6e6e6}
+tr:last-child td{border-bottom:0}
+td:last-child{text-align:right;font-size:16px;white-space:nowrap}
+.badge{display:inline-block;padding:2px 10px;border-radius:3px;font:bold 14px Tahoma,Verdana,sans-serif;border:1px solid rgba(0,0,0,.25)}
+.spruch{border:1px solid #9a9a9a;background:#fff;color:#000;padding:18px;text-align:center;margin-bottom:16px}
+.spruch p{margin:0;font:900 clamp(24px,6vw,32px)/1.12 Impact,"Arial Black",sans-serif;text-transform:uppercase;overflow-wrap:anywhere}
+.meme{display:block;width:100%;max-width:360px;height:auto;max-height:340px;object-fit:contain;margin:0 auto 14px;border:1px solid #fff;background:#fff}
+.fuss{text-align:center;font-size:11px;color:#888;margin-top:24px}
+.fuss a,.giphy-hinweis a{color:#555}
+.giphy-hinweis{font-size:11px;color:#777;margin:-6px 0 16px}
+[hidden]{display:none!important}
+@media(max-width:480px){.zeile{flex-direction:column;align-items:stretch;gap:4px}.zeile>label{width:auto}}
+</style>
+</head>
+<body>
+<div class="inhalt">
+  <h1>Umsatzziel-Rechner</h1>
+  <p class="unter">Wie viel Umsatz willst du bis zum Zieldatum erreicht haben? Wie viel musst du pro Woche reinholen? Einfach ausfüllen und berechnen.</p>
+
+  <form id="form" class="kasten" novalidate>
+    <div class="kopf">Deine Angaben</div>
+    <div class="body">
+      <div class="zeile"><label for="datum">Zieldatum:</label><input id="datum" type="date"></div>
+      <div class="zeile"><label for="ziel">Umsatzziel (€):<br><small>gesamt bis zum Zieldatum</small></label><input id="ziel" type="text" inputmode="decimal" placeholder="z. B. 40.000" autocomplete="off"></div>
+      <div class="zeile"><label for="ist">Bereits erreicht (€):<br><small>optional</small></label><input id="ist" type="text" inputmode="decimal" placeholder="0" autocomplete="off"></div>
+      <div class="knopfzeile"><button type="submit">Ergebnis berechnen</button></div>
+    </div>
+  </form>
+
+  <div id="hinweis" class="hinweis" role="status" hidden></div>
+
+  <div id="ergebnis" hidden>
+    <div class="kasten">
+      <div class="kopf">Dein Ergebnis</div>
+      <table><tbody>
+        <tr><td>Verbleibende Wochen:</td><td><b id="wochen"></b></td></tr>
+        <tr><td>Nötiger Umsatz pro Woche:</td><td><b id="proWoche"></b></td></tr>
+        <tr><td>Einschätzung:</td><td><span id="einschaetzung" class="badge"></span></td></tr>
+      </tbody></table>
+    </div>
+    <div id="spruch" class="spruch" role="status">
+      <div id="bild"></div>
+      <p id="text"></p>
+    </div>
+  </div>
+
+  <p class="giphy-hinweis">Beim Berechnen wird ein GIF von GIPHY geladen. Dabei wird deine IP-Adresse an GIPHY (USA) übermittelt. Mehr dazu in der <a href="/datenschutz.html">Datenschutzerklärung</a>.</p>
+  <p class="fuss">© 2026 wie von selbst · <a href="/impressum.html">Impressum</a> · <a href="/datenschutz.html">Datenschutz</a> · GIFs powered by GIPHY</p>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="hund" viewBox="0 0 300 180">
+    <rect width="300" height="180" fill="#fff6a8"/>
+    <ellipse cx="150" cy="150" rx="120" ry="14" fill="#e6d470"/>
+    <ellipse cx="160" cy="118" rx="90" ry="34" fill="#c98a4b"/>
+    <ellipse cx="160" cy="108" rx="80" ry="22" fill="#dca266"/>
+    <path d="M245 125q30 5 35-15" stroke="#c98a4b" stroke-width="12" fill="none" stroke-linecap="round"/>
+    <ellipse cx="78" cy="118" rx="40" ry="30" fill="#dca266"/>
+    <ellipse cx="50" cy="130" rx="18" ry="13" fill="#e9bb88"/>
+    <circle cx="37" cy="126" r="6" fill="#222"/>
+    <path d="M90 95q15-25 30 5q-10 25-30-5z" fill="#8a5a2e"/>
+    <path d="M62 112q8 5 16 0M88 112q8 5 16 0" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <text x="150" y="58" font-family="Impact,Arial Black,sans-serif" font-size="34" fill="#ff1493">Z</text>
+    <text x="180" y="40" font-family="Impact,Arial Black,sans-serif" font-size="44" fill="#ff1493">Z</text>
+    <text x="220" y="28" font-family="Impact,Arial Black,sans-serif" font-size="30" fill="#ff1493">z</text>
+  </symbol>
+  <symbol id="daumen" viewBox="0 0 300 180">
+    <rect width="300" height="180" fill="#c9ffd9"/>
+    <circle cx="150" cy="95" r="70" fill="#7dff9f"/>
+    <rect x="112" y="88" width="78" height="62" rx="16" fill="#f2c08c"/>
+    <path d="M128 92 L140 36 q8-14 20-4 q6 8 2 26 l-6 30z" fill="#f2c08c"/>
+    <path d="M190 100h-60M190 116h-60M190 132h-60" stroke="#d29a62" stroke-width="3"/>
+    <rect x="80" y="86" width="34" height="70" rx="6" fill="#1c6dd0"/>
+    <path d="M55 40l8 14M245 40l-8 14M40 90h16M260 90h-16" stroke="#003d18" stroke-width="5" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="schwitz" viewBox="0 0 300 180">
+    <rect width="300" height="180" fill="#ffd0d0"/>
+    <circle cx="150" cy="92" r="62" fill="#ffd93b"/>
+    <circle cx="150" cy="92" r="62" fill="none" stroke="#c99a00" stroke-width="4"/>
+    <path d="M118 78l18 6M182 78l-18 6" stroke="#222" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="128" cy="94" r="7" fill="#222"/><circle cx="172" cy="94" r="7" fill="#222"/>
+    <path d="M125 128q25-14 50 0" stroke="#222" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M206 56q14 20 0 30q-14-10 0-30z" fill="#4fb5ff"/>
+    <path d="M222 92q10 15 0 22q-10-7 0-22z" fill="#4fb5ff"/>
+    <path d="M90 60q12 18 0 26q-12-8 0-26z" fill="#4fb5ff"/>
+  </symbol>
+</svg>
+
+<script>
+{
+  const STIL = {
+    schnarch: { bg: "#ffef00", fg: "#ff1493", rand: "#ff1493", svg: "hund", alt: "Schlafender Hund" },
+    mittel:   { bg: "#00e05a", fg: "#002d12", rand: "#003d18", svg: "daumen", alt: "Daumen hoch" },
+    viel:     { bg: "#ff1a1a", fg: "#ffffff", rand: "#8b0000", svg: "schwitz", alt: "Schwitzendes Gesicht" }
+  };
+  const SPRUECHE = {
+    schnarch: [
+      ["Da setzt sich der Hund meiner Oma ja höhere Ziele als du.", "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdjIwbXlmdWIydzZmdWEycjE3cjhyNjM2d2lnZ3B2aDhtaWsyNms4cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/eLppXmCR8EuU4S8wMJ/giphy.gif"],
+      ["Das schafft mein Toaster nebenbei.", "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3cwOWduNGp6MXY5NW9mZXAwM3pxYWx2MWNlMDMwbWZsOXdqNXYzMCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/cgeLxHTFzhEzu/giphy.gif"],
+      ["Willst du Umsatz machen oder Taschengeld?", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGFyMjkzeWQzeTFzdDV2c3ozczNocTZ6Mmo3djdrNmc0YzV3NjdhdiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/H7gyNHBZhoY1lZku93/giphy.gif"],
+      ["Wow. Ganz mutig. Nicht.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExenA2dWEwOTF6YW1ibTBreDdyY2FyYTBmcDl4Z3MxYjhxc2xraWwxdSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Ys0Mvp3ZHTmKN6qIZK/giphy.gif"],
+      ["Damit gewinnst du höchstens den Preis für Bescheidenheit.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY202cmRodGg2MHRoN2Nvdmk5Ynp5OW5zbWRyYW16aWx5cGc3eW84cyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/2miRQCQ6Mw7dz8QgEm/giphy.gif"],
+      ["Das ist kein Ziel, das ist ein Nickerchen mit Zahlen.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY3MxZHUxMXRuZWp1d3I0NDR3cjh4b2h5MWFqbDZnNXRjY2wweGRodiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/mD5OczI0Xyz5P0hy4Y/giphy.gif"],
+      ["Mein Goldfisch hat ambitioniertere Quartalspläne.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjBscGpmbjBsdHBneTNuaXd6NHVscjZ5eDhqczhwejhlbjVrODUyZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Wrmiq7uZrieyc/giphy.gif"],
+      ["Hast du dich vertippt oder willst du nur spielen?", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNmxuZm45Y3RyZXoxbGVtNGVjMnlxeWdrOWgzNGM2emdtZmo2cnV4eiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/lALXmzceZjqI1ogAYQ/giphy.gif"],
+      ["So ein Ziel schreibt man sich nicht auf, das erledigt man beim Frühstück.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmU4cjJ3N3JtZG0yZzVjZHBxdnZkMzhqdmZjM3dpemwybWNuc3JtZiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xUPJPDJKxwOIsq97W0/giphy.gif"],
+      ["Guter Witz. Jetzt schreib mal die richtigen Zahlen rein.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN3h4aWd3NWpzam5sdWhwamZtZG5wYzB5em5rZmVvYngyd2l1OGF3MiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/MuAmuj8fnmk4rMJ8e9/giphy.gif"],
+      ["Da geht mehr. Viel mehr. Trau dich!", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExczVucnZqMGNoMWVtdXUxbWg5c3drNW9tNGpvbGdldWYxM2ZqNmxvdCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/D0lC4HaqsIIk4KrnML/giphy.gif"],
+      ["Das reicht gerade so für Kaffee. Und zwar nicht den guten.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHZsdG04dXg2M3Jwam12cjBqb3RjOWtubXd0bTU4djRkNXUxZ3FwMiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/cGgII3vqoCfcawJFIl/giphy.gif"]
+    ],
+    mittel: [
+      ["Solide! Das ist ein Ziel, mit dem man arbeiten kann.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNDRhZDd0YWVwNXhoa2Fvbzl4cnZ2bGRlMms5enJ3aWp2bWt6NmthZyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/m2Q7FEc0bEr4I/giphy.gif"],
+      ["Läuft bei dir. Jetzt nur noch dranbleiben!", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOGM5MWlqbmdwMWNmY24xZWV4cGNrNnRuNGR0NDluY3kzOHV1OGhlNiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/k9GiBjSbYDsZ6pdoxk/giphy.gif"],
+      ["Machbar, wenn du nicht jeden Montag auf Dienstag verschiebst.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbGJkd3R5cG1rd3hxdzBmdHJseGcydjgwN250ZGZxNGM1bWdhMXZzMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/wZXOmCIaY6jdFQQbjl/giphy.gif"],
+      ["Gutes Ziel. Nicht zu lasch, nicht größenwahnsinnig.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExczF1bm56NzhpenVtYm5ubWw0bWdhdTZyaTExd3o0ZG1ncnk0cW8zciZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l2SpMbZ3PlhSVjinK/giphy.gif"],
+      ["Daumen hoch! Jetzt ab ans Telefon.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbXc1dDRjMGUzbmEyaW04YXAxOTl3cGR0aHRzZTk1cHBwd2ZyeGljZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/diUKszNTUghVe/giphy.gif"],
+      ["Das ist die Sorte Ziel, auf die man am Freitag stolz ist.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExazRrYnE2dWYyMjQ2MmpyYjV1ZzFmeGxyYzRjazF1aWtjYnFqdHFyeiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/14tLmsD1i0iALu/giphy.gif"],
+      ["Realistisch und trotzdem sportlich. Respekt.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNm95dW5qMzV3bHZ5aDRmNTlqcWZ5cWYzdGVvczB4YjJmZm5ndzVqMiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/lEVZJzy4w15qE/giphy.gif"],
+      ["Ein Anruf mehr pro Tag und das Ding ist geritzt.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdmxwb3Z0czNyOXBiMjA1ejN5MDhyOHlwZGVncWh5cjR4aXFqNHZmZCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/F8ByRhbCzm4F2/giphy.gif"],
+      ["Klingt nach einem Plan. Und Pläne sind sexy.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2FwOHRvY2s1cmVqaXZsaXB5NzI1Zng4eHMwdGY0eHIzbzVjdzBvaiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/1hA34Uzt3aScCLsZgF/giphy.gif"],
+      ["Du hast das im Griff. Jetzt nur noch machen!", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWduMGo1MHppNHhudnd4dzBmbXh6cDRmNDFmd2hrM256eGZ0cG01OSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Ys0Mvp3ZHTmKN6qIZK/giphy.gif"],
+      ["Genau richtig dosiert. Wie ein guter Espresso.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcW9xdzFvaTBpMDhqbG40dmxtMGVuc3Bsd21tcW96Mnlhcmhvd2VhNSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ZMzbYdi9WkBGgARun5/giphy.gif"]
+    ],
+    viel: [
+      ["Na dann, schau mal, dass du in die Pötte kommst!", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXo0NHNrZGE1cWRvd3E1ZHFtZHd5anp3MnVtNXUzYnU2cjFud25yaSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/QmH4MuISBE1dyPmTAy/giphy.gif"],
+      ["Uff. Kaffee kochen, Ärmel hoch, los geht's!", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYXB2ZnMxMTl6NHFmNnU5ZWVsZnV0OXJyMWtzam9qMmN5eG0yYTljbCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/CjmvTCZf2U3p09Cn0h/giphy.gif"],
+      ["Das wird kein Spaziergang, das wird ein Marathon. Bergauf.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTVmaTQ3bnNxMnVwdHN4bWZvenlibGZldWpoMTBreDJhdDA3bzl2ZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/22QZygEIIOLWy9TbsM/giphy.gif"],
+      ["Mutig! Hoffentlich hast du keine Urlaubspläne.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYmFqZ2V0bGlyNGc3bXdvdngzanNoNGJ6ZDBoNDMwZnFjNzJuOGNxMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/l2Sq727aE8ISW9NDO/giphy.gif"],
+      ["Na dann, leg los, champ!", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZDA4aXh3dXo2dGx3OTJ3eHhmdGZnczNxYTdoYnB6YTR2NHVobW1paCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/73oW01Plu9O5HAOdEH/giphy.gif"],
+      ["Gut, dass du eh kein Wochenende mehr machen wolltest.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTdta2QwNTdnb2o0NHBncmZ0Mnp3YTBzdnBmc3Q1bTA4a2U1ZHp2ayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Gsrj1RAgVBQ9q/giphy.gif"],
+      ["Du wolltest es ja so.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExajc4dTd5N256ZnRwOTViNGlwOWhzOHVncGxpY25reXdxdjBjOHJqaiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/FpusHX6DMQG0fW84p3/giphy.gif"],
+      ["Ambitioniert ist gar kein Ausdruck. Jetzt aber Tempo!", "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3eXBjcWJrNWx0dmIxa3ptNDVnbXllY3J0aHlkZ2hxODFyZzR0eG9pdSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/oAGMsk1AdOXFZdK58O/giphy.gif"],
+      ["Das ist kein Ziel, das ist eine Kampfansage.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNjc4dTJuN3U5YXN4YzV0NGNvOHpjNnBhNWFsaTk4aGtoY254ZWkzNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/EwznoWmIYjOxi/giphy.gif"],
+      ["Wenn du das schaffst, lade ich dich gedanklich zum Sekt ein.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdzd5bnYwbWl2OWN5ODV6cjB1NTlidW04NmMzYTBra3lwMzRrempubyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/yziuK6WtDFMly/giphy.gif"],
+      ["Okay, Superheldin. Cape an und ab dafür!", "https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3d2IyaWsxandsbTExcHdkdzZ4dTMxbWJkcmh0ZGhtYjUwcGFjbjdoMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/f5RLVBZqKDipmDAsrl/giphy.gif"],
+      ["Hoffentlich ist deine Kaffeemaschine belastbar.", "https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExN21xMXlzNDA1azN1ZXF3N25wZ3BzMDBvYWgwb3phMDlrMndxaW5xOCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/0RGWDkYtUiW6BY6uPK/giphy.gif"]
+    ]
+  };
+
+  const TAG = 86400000;
+  const $ = id => document.getElementById(id);
+  const mitternacht = d => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const euro = new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR", maximumFractionDigits: 0 });
+
+  function parseDatum(w) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(w);
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+  }
+  function parseBetrag(w) {
+    const s = w.trim().replace(/\s|€/g, "");
+    if (!s) return null;
+    let n = s;
+    if (s.includes(",")) n = s.replace(/\./g, "").replace(",", ".");
+    else if (/^\d{1,3}(\.\d{3})+$/.test(s)) n = s.replace(/\./g, "");
+    const x = Number(n);
+    return Number.isFinite(x) && x >= 0 ? x : null;
+  }
+  const kategorie = b => b < 1000 ? "schnarch" : b <= 2500 ? "mittel" : "viel";
+
+  let letzter = null;
+  function waehle(kat) {
+    const liste = SPRUECHE[kat].filter(s => s[0] !== letzter);
+    const s = liste[Math.floor(Math.random() * liste.length)];
+    letzter = s[0];
+    return s;
+  }
+
+  function berechne() {
+    const datum = parseDatum($("datum").value);
+    if (!datum) return { hinweis: "Bitte wähle zuerst ein Zieldatum aus." };
+    const tage = Math.round((mitternacht(datum) - mitternacht(new Date())) / TAG);
+    if (tage <= 0) return { hinweis: "Das Zieldatum muss in der Zukunft liegen. Zeitreisen rechnen wir (noch) nicht." };
+    const ziel = parseBetrag($("ziel").value);
+    if (!ziel) return { hinweis: "Bitte gib ein Umsatzziel in Euro ein." };
+    const ist = $("ist").value.trim() === "" ? 0 : parseBetrag($("ist").value);
+    if (ist === null) return { hinweis: "Der bereits erreichte Umsatz sieht nicht nach einer Zahl aus." };
+    const rest = ziel - ist;
+    if (rest <= 0) return { hinweis: "Glückwunsch, dein Ziel ist schon erreicht! Zeit für ein neues." };
+    const wochen = Math.floor(tage / 7);
+    if (wochen === 0) return { hinweis: "Bis zum Zieldatum ist es keine ganze Woche mehr. Wähle ein späteres Datum." };
+    return { wochen, proWoche: rest / wochen };
+  }
+
+  const morgen = new Date(); morgen.setDate(morgen.getDate() + 1);
+  const p = n => String(n).padStart(2, "0");
+  $("datum").min = `${morgen.getFullYear()}-${p(morgen.getMonth() + 1)}-${p(morgen.getDate())}`;
+
+  $("form").addEventListener("submit", e => {
+    e.preventDefault();
+    const r = berechne();
+    if (r.hinweis) {
+      $("hinweis").innerHTML = "<strong>Hinweis:</strong> ";
+      $("hinweis").append(r.hinweis);
+      $("hinweis").hidden = false;
+      $("ergebnis").hidden = true;
+      return;
+    }
+    $("hinweis").hidden = true;
+    const kat = kategorie(r.proWoche);
+    const st = STIL[kat];
+    const [text, gif] = waehle(kat);
+    $("wochen").textContent = r.wochen + (r.wochen === 1 ? " Woche" : " Wochen");
+    $("proWoche").textContent = euro.format(r.proWoche);
+    const EIN = { schnarch: ["easy", "#1e9e3e", "#fff"], mittel: ["machbar", "#ffd400", "#000"], viel: ["ambitioniert", "#d62020", "#fff"] }[kat];
+    const badge = $("einschaetzung");
+    badge.textContent = EIN[0]; badge.style.background = EIN[1]; badge.style.color = EIN[2];
+    const box = $("spruch");
+    
+    const svg = () => { $("bild").innerHTML = `<svg class="meme" viewBox="0 0 300 180" role="img" aria-label="${st.alt}"><use href="#${st.svg}"/></svg>`; };
+    if (!gif) { svg(); } else {
+    const img = new Image();
+    img.className = "meme"; img.alt = st.alt; img.src = gif;
+    img.onerror = svg;
+    $("bild").replaceChildren(img);
+    }
+    $("text").textContent = text;
+    $("ergebnis").hidden = false;
+    $("ergebnis").scrollIntoView({ block: "nearest" });
+  });
+}
+</script>
+</body>
+</html>
