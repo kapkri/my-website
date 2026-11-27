@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f8f7">
+  <meta name="description" content="Berechne deinen tatsächlichen Umsatz pro Arbeitsstunde – inklusive unbezahlter Arbeitszeit und Betriebskosten.">
+  <title>Echter-Stundensatz-Rechner | wievonselbstai</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="config.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="wievonselbstai Startseite">
+        <span class="brand-mark">w</span><span id="brandText">WIEVONSELBSTAI</span>
+      </a>
+      <span class="header-note">Kostenloser Rechner</span>
+    </header>
+
+    <main id="top">
+      <section class="intro">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> ZEIT. UMSATZ. WIRKLICHKEIT.</div>
+        <h1>Was verdienst du <span>wirklich</span> pro Stunde?</h1>
+        <p class="intro-copy">Dein Stundensatz ist nicht automatisch das, was am Ende für deine Arbeitszeit übrig bleibt. Berücksichtige unbezahlte Aufgaben und Betriebskosten – und finde heraus, wo du Zeit verlierst.</p>
+        <div class="intro-points"><span>✓ In wenigen Minuten</span><span>✓ Individuelle Auswertung</span><span>✓ PDF-Report</span></div>
+      </section>
+
+      <section class="calculator-card" aria-label="Stundensatz-Rechner">
+        <div class="card-topline">
+          <div><div class="section-kicker">DEINE BERECHNUNG</div><h2 id="stepTitle">Deine Einnahmen</h2></div>
+          <div class="step-counter"><strong id="stepNumber">1</strong><span> / 5</span></div>
+        </div>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+        <form id="calculatorForm" novalidate>
+          <section class="step-panel active" data-step="0">
+            <p class="step-description">Wie viel Umsatz erzielst du mit deiner selbstständigen Tätigkeit?</p>
+            <div class="choice-grid">
+              <label class="choice-card selected"><input type="radio" name="incomeMode" value="revenue" checked><span class="choice-title">Monatsumsatz</span><span class="choice-desc">Ich kenne meinen monatlichen Umsatz.</span></label>
+              <label class="choice-card"><input type="radio" name="incomeMode" value="hourly"><span class="choice-title">Stundensatz</span><span class="choice-desc">Ich rechne nach Stunden ab.</span></label>
+            </div>
+            <div id="revenueFields" class="field-grid one-col">
+              <label class="field"><span>Monatlicher Umsatz (netto)</span><span class="input-wrap"><input id="monthlyRevenue" type="number" min="0" step="0.01" placeholder="z. B. 6.000" inputmode="decimal"><span>€</span></span><small>Umsatz vor Betriebskosten und persönlichen Steuern.</small></label>
+            </div>
+            <div id="hourlyFields" class="field-grid two-col hidden">
+              <label class="field"><span>Vereinbarter Stundensatz (netto)</span><span class="input-wrap"><input id="hourlyRate" type="number" min="0" step="0.01" placeholder="z. B. 65" inputmode="decimal"><span>€</span></span></label>
+              <label class="field"><span>Abgerechnete Stunden pro Monat</span><span class="input-wrap"><input id="billedHoursForRevenue" type="number" min="0" step="0.25" placeholder="z. B. 100" inputmode="decimal"><span>Std.</span></span></label>
+            </div>
+            <div class="info-note"><span class="info-icon">i</span><span>Gib alle Umsatzwerte ohne Umsatzsteuer ein. Wenn du nicht umsatzsteuerpflichtig bist, verwende deine tatsächlichen Einnahmen.</span></div>
+          </section>
+
+          <section class="step-panel" data-step="1">
+            <p class="step-description">Wie viele Stunden kannst du deinen Kunden tatsächlich berechnen?</p>
+            <div class="field-grid one-col">
+              <label class="field"><span>Abrechenbare Stunden pro Monat</span><span class="input-wrap"><input id="billableHours" type="number" min="0" step="0.25" placeholder="z. B. 120" inputmode="decimal"><span>Std.</span></span><small>Nur Stunden, die im Umsatz bereits berücksichtigt sind oder abgerechnet werden können.</small></label>
+            </div>
+            <div class="info-note"><span class="info-icon">i</span><span>Bei der Eingabe „Stundensatz“ im ersten Schritt sollte dieser Wert den dort angegebenen abrechenbaren Stunden entsprechen.</span></div>
+          </section>
+
+          <section class="step-panel" data-step="2">
+            <p class="step-description">Welche zusätzliche Zeit investierst du pro Woche, ohne sie direkt abrechnen zu können?</p>
+            <div class="field-grid two-col">
+              <label class="field"><span>Vorbereitung & Planung</span><span class="input-wrap"><input id="prep" type="number" min="0" step="0.25" value="0" inputmode="decimal"><span>Std./Woche</span></span></label>
+              <label class="field"><span>E-Mails & Kundenkommunikation</span><span class="input-wrap"><input id="email" type="number" min="0" step="0.25" value="0" inputmode="decimal"><span>Std./Woche</span></span></label>
+              <label class="field"><span>Anfahrt & Reisezeit</span><span class="input-wrap"><input id="travel" type="number" min="0" step="0.25" value="0" inputmode="decimal"><span>Std./Woche</span></span></label>
+              <label class="field"><span>Korrekturen & Nacharbeiten</span><span class="input-wrap"><input id="rework" type="number" min="0" step="0.25" value="0" inputmode="decimal"><span>Std./Woche</span></span></label>
+              <label class="field"><span>Buchhaltung & Verwaltung</span><span class="input-wrap"><input id="admin" type="number" min="0" step="0.25" value="0" inputmode="decimal"><span>Std./Woche</span></span></label>
+              <label class="field"><span>Akquise & Angebotserstellung</span><span class="input-wrap"><input id="sales" type="number" min="0" step="0.25" value="0" inputmode="decimal"><span>Std./Woche</span></span></label>
+              <label class="field"><span>Sonstige Tätigkeiten</span><span class="input-wrap"><input id="otherTime" type="number" min="0" step="0.25" value="0" inputmode="decimal"><span>Std./Woche</span></span></label>
+            </div>
+            <div class="info-note"><span class="info-icon">i</span><span>Der Rechner multipliziert Wochenwerte mit 4,33. Trage nur zusätzliche Arbeitszeit ein, die nicht bereits in den abrechenbaren Stunden enthalten ist.</span></div>
+          </section>
+
+          <section class="step-panel" data-step="3">
+            <p class="step-description">Welche laufenden betrieblichen Kosten entstehen dir pro Monat?</p>
+            <div class="field-grid two-col">
+              <label class="field"><span>Software & Abonnements</span><span class="input-wrap"><input id="software" type="number" min="0" step="0.01" value="0" inputmode="decimal"><span>€</span></span></label>
+              <label class="field"><span>Büro & Arbeitsplatz</span><span class="input-wrap"><input id="office" type="number" min="0" step="0.01" value="0" inputmode="decimal"><span>€</span></span></label>
+              <label class="field"><span>Versicherungen</span><span class="input-wrap"><input id="insurance" type="number" min="0" step="0.01" value="0" inputmode="decimal"><span>€</span></span></label>
+              <label class="field"><span>Telefon & Internet</span><span class="input-wrap"><input id="phone" type="number" min="0" step="0.01" value="0" inputmode="decimal"><span>€</span></span></label>
+              <label class="field"><span>Fahrtkosten</span><span class="input-wrap"><input id="mobility" type="number" min="0" step="0.01" value="0" inputmode="decimal"><span>€</span></span></label>
+              <label class="field"><span>Sonstige Betriebskosten</span><span class="input-wrap"><input id="otherCosts" type="number" min="0" step="0.01" value="0" inputmode="decimal"><span>€</span></span></label>
+            </div>
+            <div class="info-note"><span class="info-icon">i</span><span>Berücksichtige nur betriebliche Kosten. Private Ausgaben, Einkommensteuer und persönliche Sozialversicherungsbeiträge gehören nicht in diese Kostenübersicht.</span></div>
+          </section>
+
+          <section class="step-panel" data-step="4">
+            <p class="step-description">Welchen monatlichen Überschuss möchtest du vor persönlichen Steuern erzielen?</p>
+            <div class="field-grid one-col">
+              <label class="field"><span>Gewünschter monatlicher Unternehmerüberschuss</span><span class="input-wrap"><input id="targetSurplus" type="number" min="0" step="0.01" placeholder="z. B. 4.000" inputmode="decimal"><span>€</span></span><small>Nach betrieblichen Kosten, aber vor Einkommensteuer und privaten Abgaben.</small></label>
+            </div>
+            <div class="info-note"><span class="info-icon">i</span><span>Du kannst auch 0 € eingeben, wenn du zunächst nur deinen aktuellen Stundensatz analysieren möchtest.</span></div>
+          </section>
+
+          <div class="form-error" id="formError" role="alert" aria-live="polite"></div>
+          <div class="form-actions"><button type="button" class="button button-secondary" id="backButton" disabled>Zurück</button><button type="button" class="button button-primary" id="nextButton">Weiter <span>→</span></button></div>
+        </form>
+      </section>
+
+      <section id="results" class="results-card hidden" aria-live="polite">
+        <div class="results-heading"><div><div class="section-kicker">DEINE AUSWERTUNG</div><h2>Das ist dein echter Stundensatz.</h2><p>Die Werte basieren auf deinen Eingaben und den unten genannten Annahmen.</p></div><span class="result-check">✓</span></div>
+        <div class="metric-grid">
+          <article class="metric metric-featured"><span>Effektiver Umsatz je Arbeitsstunde</span><strong id="effectiveRate">–</strong><small>Monatsumsatz ÷ gesamte Arbeitszeit</small></article>
+          <article class="metric"><span>Überschuss je Arbeitsstunde</span><strong id="netRate">–</strong><small>Nach betrieblichen Kosten</small></article>
+          <article class="metric"><span>Kostendeckender Mindeststundensatz</span><strong id="costRate">–</strong><small>Nur betriebliche Kosten</small></article>
+          <article class="metric"><span>Erforderlicher Stundensatz</span><strong id="targetRate">–</strong><small>Für deinen gewünschten Überschuss</small></article>
+        </div>
+        <div class="result-columns">
+          <article class="result-panel"><h3>Deine Arbeitszeit pro Monat</h3><div class="time-bar"><div id="billableBar"></div><div id="unpaidBar"></div></div><div class="legend"><span><i class="legend-green"></i>Abrechenbar <b id="billableValue">–</b></span><span><i class="legend-orange"></i>Zusätzlich <b id="unpaidValue">–</b></span></div><div class="result-total"><span>Gesamte Arbeitszeit</span><strong id="totalHours">–</strong></div><div class="result-total"><span>Abrechenbarer Anteil</span><strong id="billableShare">–</strong></div></article>
+          <article class="result-panel"><h3>Deine größten Zeitaufwände</h3><div id="timeBreakdown" class="breakdown-list"></div></article>
+        </div>
+        <div class="interpretation" id="interpretation"></div>
+        <div class="result-actions"><button class="button button-primary" id="downloadPdf">PDF herunterladen <span>↓</span></button><button class="button button-secondary" id="emailReport">PDF per E-Mail erhalten</button><button class="text-button" id="restartButton">Berechnung neu starten</button></div>
+        <p class="disclaimer">Hinweis: Die Ergebnisse sind eine vereinfachte betriebswirtschaftliche Orientierung und keine Steuer- oder Unternehmensberatung. Persönliche Steuern, Sozialversicherung, Urlaub, Krankheit und saisonale Schwankungen sind nicht berücksichtigt.</p>
+      </section>
+
+      <section id="emailPanel" class="email-card hidden">
+        <button class="close-button" id="closeEmail" aria-label="Schließen">×</button>
+        <div class="section-kicker">DEIN REPORT</div><h2>Wohin dürfen wir deinen Report senden?</h2><p>Du erhältst deine persönliche Auswertung als PDF an deine E-Mail-Adresse.</p>
+        <form id="emailForm">
+          <div class="field-grid two-col"><label class="field"><span>Vorname (optional)</span><input id="firstName" type="text" maxlength="80" placeholder="Dein Vorname"></label><label class="field"><span>E-Mail-Adresse</span><input id="emailAddress" type="email" maxlength="254" required placeholder="name@beispiel.de"></label></div>
+          <button class="button button-primary" id="sendEmailButton" type="submit">PDF jetzt senden <span>→</span></button>
+          <div id="emailStatus" class="email-status" role="status" aria-live="polite"></div>
+          <small class="privacy-note">Deine Angaben werden zur Erstellung und Zustellung des angeforderten Reports verarbeitet. Weitere Informationen findest du in den Datenschutzhinweisen.</small>
+        </form>
+      </section>
+    </main>
+    <footer class="site-footer"><span>© <span id="year"></span> wievonselbstai</span><span>Praktische Lösungen, die Zeit sparen.</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

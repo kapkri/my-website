@@ -1,0 +1,11 @@
+{
+  "name": "wievonselbstai-stundensatz",
+  "version": "1.0.1",
+  "private": true,
+  "description": "Einbettbarer Echter-Stundensatz-Rechner für wievonselbstai mit Netlify Functions",
+  "scripts": {
+    "dev": "netlify dev",
+    "start": "netlify dev"
+  },
+  "type": "module"
+}
